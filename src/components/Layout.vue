@@ -14,23 +14,33 @@
   </div>
   <div class="input-containter">
     <input
+      :disabled="isDisabled"
       class="user-input"
       type="text"
       v-model="currentInput"
       @keypress.space="isUserInputCorrect"
     />
-    <span>1:00</span>
-    <button>Restart</button>
+    <span> {{ timeLeft }}s </span>
+    <button @click="restartCount">Restart</button>
   </div>
-  <ul>
-    <li>Current Input: {{ currentInput }}</li>
+  <div v-if="!showResult">Current Input: {{ currentInput }}</div>
+  <ul class="result-container">
+    <li>Results:</li>
+    <li>
+      <div>{{ rightTotal + wrongTotal }} WPM</div>
+      <div style="font-size: 10px">(words per minute)</div>
+    </li>
+    <li>
+      Accuracy:
+      {{ accuracy === "NaN" ? 0 : accuracy }}%
+    </li>
     <li>Correct words: {{ rightTotal }}</li>
     <li>Wrong words: {{ wrongTotal }}</li>
   </ul>
 </template>
 
 <script setup lang="ts">
-import { computed, ComputedRef, ref } from "vue";
+import { Ref, ref, onMounted, computed } from "vue";
 const paragraph =
   "Last week we installed a kitty door so that our cat could come and go as she pleases. Unfortunately, we ran into a problem. Our cat was afraid to use the kitty door. We tried pushing her through, and that caused her to be even more afraid. The kitty door was dark, and she couldn’t see what was on the other side. The first step we took in solving this problem was taping the kitty door open. After a couple of days, she was confidently coming and going through the open door. However, when we removed the tape and closed the door, once again, she would not go through. They say you catch more bees with honey, so we decided to use food as bait. We would sit next to the kitty door with a can of wet food and click the top of the can. When kitty came through the closed door, we would open the can and feed her. It took five days of doing this to make her unafraid of using the kitty door. Now we have just one last problem: our kitty controls our lives!".replace(
     /[^a-zA-Z ]/g,
@@ -42,21 +52,24 @@ interface wordItem {
   isCorrect: 1 | 2 | 3;
 }
 
-let dividedParagraph: ComputedRef<wordItem[]> = computed(() => {
-  return paragraph.split(" ").map((i) => {
-    return {
-      value: i.toLocaleLowerCase(),
-      isCorrect: 1,
-    };
-  });
-});
+let dividedParagraph: Ref<wordItem[]> = ref([]);
 
 let currentInput = ref("");
 let rightTotal = ref(0);
 let wrongTotal = ref(0);
 let currentIndex = ref(0);
+let screenTimer = ref();
+let accuracy = computed(() => {
+  return (
+    (rightTotal.value / (rightTotal.value + wrongTotal.value)) *
+    100
+  ).toFixed(2);
+});
 
 function isUserInputCorrect() {
+  if (currentIndex.value === 0) {
+    screenTimer.value = setupTimer();
+  }
   const targetValue = dividedParagraph.value[currentIndex.value].value.trim();
   const userInputValue = currentInput.value.trim();
 
@@ -73,6 +86,42 @@ function isUserInputCorrect() {
   if (currentIndex.value <= dividedParagraph.value.length - 2)
     currentIndex.value += 1;
 }
+
+let timeLeft = ref(60);
+let isDisabled = ref(false);
+let showResult = ref(false);
+function setupTimer() {
+  return setInterval(() => {
+    if (timeLeft.value > 0) {
+      timeLeft.value -= 1;
+    } else {
+      isDisabled.value = true;
+      showResult.value = true;
+    }
+  }, 1000);
+}
+
+function restartCount() {
+  currentIndex.value = 0;
+  dividedParagraph.value = paragraph.split(" ").map((i) => {
+    return {
+      value: i.toLocaleLowerCase(),
+      isCorrect: 1,
+    };
+  });
+  timeLeft.value = 60;
+  rightTotal.value = 0;
+  wrongTotal.value = 0;
+  if (screenTimer.value) {
+    clearInterval(screenTimer.value);
+    screenTimer.value = null;
+  }
+}
+
+onMounted(() => {
+  console.log("On Mounted");
+  restartCount();
+});
 </script>
 
 <style lang="scss" scoped>
