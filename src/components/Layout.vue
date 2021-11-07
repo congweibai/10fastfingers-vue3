@@ -109,6 +109,7 @@ function restartCount() {
       isCorrect: 1,
     };
   });
+  isDisabled.value = false;
   timeLeft.value = 60;
   rightTotal.value = 0;
   wrongTotal.value = 0;
