@@ -6,6 +6,7 @@
           { 'highlight-index': currentIndex === index },
           { isCorrect: word.isCorrect === 2 },
           { isWrong: word.isCorrect === 3 },
+          { 'highlight-error': index === hightErrorIndex },
         ]"
         >{{ word.value }}</span
       >
@@ -40,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { Ref, ref, onMounted, computed } from "vue";
+import { Ref, ref, onMounted, computed, watch } from "vue";
 import axios from "axios";
 
 interface wordItem {
@@ -51,6 +52,24 @@ interface wordItem {
 let dividedParagraph: Ref<wordItem[]> = ref([]);
 
 let currentInput = ref("");
+let hightErrorIndex = ref(-1);
+watch(
+  () => currentInput.value,
+  (newValue) => {
+    newValue = newValue.trim();
+    if (!newValue) {
+      hightErrorIndex.value = -1;
+      return;
+    }
+    const matchKeyRegex = new RegExp("^" + newValue, "g");
+    const wordItem = dividedParagraph.value[currentIndex.value].value;
+    if (!matchKeyRegex.test(wordItem)) {
+      hightErrorIndex.value = currentIndex.value;
+    } else {
+      hightErrorIndex.value = -1;
+    }
+  }
+);
 let rightTotal = ref(0);
 let wrongTotal = ref(0);
 let currentIndex = ref(0);
@@ -70,7 +89,6 @@ function isUserInputCorrect() {
   const userInputValue = currentInput.value.trim();
 
   if (targetValue === userInputValue) {
-    dividedParagraph.value[currentIndex.value];
     rightTotal.value += 1;
     dividedParagraph.value[currentIndex.value].isCorrect = 2;
   } else {
@@ -146,6 +164,9 @@ onMounted(() => {
 .highlight-index {
   border-radius: 2px;
   background: lightblue;
+}
+.highlight-error {
+  background: red;
 }
 .isCorrect {
   color: green;
