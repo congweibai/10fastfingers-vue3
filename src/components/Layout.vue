@@ -119,7 +119,7 @@ async function restartCount() {
   currentIndex.value = 0;
   const result = await axios.get("http://metaphorpsum.com/paragraphs/1/25");
   const paragraph = (result.data || "").replace(/[^a-zA-Z ]/g, "");
-  dividedParagraph.value = paragraph.split(" ").map((i) => {
+  dividedParagraph.value = paragraph.split(" ").map((i: string) => {
     return {
       value: i.toLocaleLowerCase(),
       isCorrect: 1,
