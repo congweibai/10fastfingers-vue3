@@ -49,6 +49,12 @@ interface wordItem {
   isCorrect: 1 | 2 | 3;
 }
 
+declare global {
+  interface Window {
+    txtgen?: any;
+  }
+}
+
 let dividedParagraph: Ref<wordItem[]> = ref([]);
 
 let currentInput = ref("");
@@ -117,8 +123,9 @@ function setupTimer() {
 
 async function restartCount() {
   currentIndex.value = 0;
-  const result = await axios.get("http://metaphorpsum.com/paragraphs/1/25");
-  const paragraph = (result.data || "").replace(/[^a-zA-Z ]/g, "");
+  // const result = await axios.get("http://metaphorpsum.com/paragraphs/1/25");
+  let txtgen = window.txtgen;
+  const paragraph = (txtgen.paragraph([30]) || "").replace(/[^a-zA-Z ]/g, "");
   dividedParagraph.value = paragraph.split(" ").map((i: string) => {
     return {
       value: i.toLocaleLowerCase(),
