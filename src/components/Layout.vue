@@ -42,7 +42,6 @@
 
 <script setup lang="ts">
 import { Ref, ref, onMounted, computed, watch } from "vue";
-import axios from "axios";
 
 interface wordItem {
   value: string;
