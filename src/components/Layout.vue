@@ -6,7 +6,7 @@
           { 'highlight-index': currentIndex === index },
           { isCorrect: word.isCorrect === 2 },
           { isWrong: word.isCorrect === 3 },
-          { 'highlight-error': index === hightErrorIndex },
+          { 'highlight-error': hightErrorIndex === index },
         ]"
         >{{ word.value }}</span
       >
