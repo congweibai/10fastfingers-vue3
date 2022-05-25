@@ -142,7 +142,6 @@ async function restartCount() {
 }
 
 onMounted(() => {
-  console.log("On Mounted");
   restartCount();
 });
 </script>
