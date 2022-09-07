@@ -1,5 +1,5 @@
 # Vue 3 + Typescript + Vite
-<a href="https://10fastfingers-vue3.vercel.app/" target="_blank">Live demo</a> or https://10fastfingers-vue3.vercel.app/
+<a href="https://10fastfingers-vue3.vercel.app/" target="_blank">Live demo</a> or <a href="https://10fastfingers-vue3.vercel.app/" target="_blank">https://10fastfingers-vue3.vercel.app/</a>
 
 This template should help get you started developing with Vue 3 and Typescript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
 
